@@ -77,12 +77,14 @@ library(tibble)
 
 
 ```{r}
-#' Say hello to someone
+#' Download the necessary files
 #' 
 #'  
 load_community_records <- function(name, exclamation = TRUE) {
+  my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
+  key_token = my_token
   zenodo = ZenodoManager$new(logger = "INFO",token = key_token)
-  community_gm = zenodo$getCommunityById("mardigmci")
+  community_gm = zenodo$getCommunityById(name)
   community_records = community_gm$links$records  
   
   data = fromJSON(community_records)
@@ -156,14 +158,17 @@ q_set <- tribble(
 #' 
 #' @export 
 #' 
-analyse_records <- function(gmci_records_id){
+analyse_records = function(gmci_records_id){
   # A function which analyses the community records and fills in the information about the dataset. Manual part. 
     
     numb_of_records = length(gmci_records_id)
+    # create two dataframes to 
+    json_data = list()
+    json_description_data = list()
     
     for (item in 1:numb_of_records){
       # consider one record from the community   
-      rec_curr = zenodo$getRecordByDOI(gmci_records_id[item])
+        rec_curr = zenodo$getRecordByDOI(gmci_records_id[item])
          
          # extract list of subjects 
          subjects_vector = sapply(rec_curr$metadata$subjects, function(x) x$subject)
@@ -182,16 +187,49 @@ analyse_records <- function(gmci_records_id){
          # extract the information about the views and downloads of the record
          zenodo_uqviews = rec_curr$stats$this_version.unique_views
          zenodo_downlds = rec_curr$stats$this_version.unique_downloads
+         license_title = rec_curr$metadata$rights[[1]]$title$en
+         url_link = rec_curr$links$self
          
          
-         #a separate block that extract information from the description 
-         desc_info = rec_new$metadata$description
+         
+         # modifying the text for the to make it readable
+         desc_info = rec_curr$metadata$description
                 ### looking for a position of the number of features in the string ###
          # modifying the text to make it accesible for a LLM query
          u = read_html(desc_info)
          extracted_text = html_text(u)
          mod_text = gsub("\n"," ",extracted_text)
          mod_text = tolower(mod_text)
+         
+         # gathering the information into the list to put it inside the 
+         
+         new_entry = list(
+                          zenodoid = zenodo_id,
+                          title = zenodo_title,
+                          zenododoi = zenodo_doi,
+                          authors = creator_names_vector,
+                          license = license_title,
+                          keywords = subjects_vector,
+                          url = url_link,
+                          downloads = zenodo_downlds,
+                          views = zenodo_uqviews
+        )
+        json_data[[item]] = new_entry
+         # work with the metadata description file: 
+        
+        new_entry_d = list(
+                    title = zenodo_title,
+                    description = mod_text,
+                    number_of_features = NULL,
+                    number_of_observations =  NULL,
+                    related_researchers = NULL,
+                    ground_truth_graph = NULL,
+                    type_of_graph = NULL
+                    
+        )
+        
+        json_description_data[[item]] = new_entry_d 
+         
          # forming up the query for the LLM ollama. notice: a running version of ollama should be open and              running locally on the device
          # Add one observation to the dataframe
    # new_observation <- data.frame(
@@ -201,7 +239,12 @@ analyse_records <- function(gmci_records_id){
    #                 DOI = curr_info$metadata$doi
    #                  Researchers
    # )
-  }
+    }
+    
+    # now 
+    
+return(json_description_data)
+    
 }
 ```
 
@@ -218,7 +261,7 @@ That code chunk does not start with `#'`, so it is not added to the package.
 Let's write some tests to make sure the function behaves as desired:
 
 ```{r}
-testthat::test_that("say_hello works", {
+testthat::test_that("analyse records works", {
   testthat::expect_equal(say_hello("Jacob"), "Hello Jacob!")
   testthat::expect_equal(say_hello("Jacob", exclamation = FALSE), "Hello Jacob.")
 })
