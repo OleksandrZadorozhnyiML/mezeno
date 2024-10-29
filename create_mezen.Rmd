@@ -166,6 +166,20 @@ analyse_records = function(gmci_records_id){
     json_data = list()
     json_description_data = list()
     
+    # setting up the chatter 
+    message_features = paste("Q: What is the number of features? Return list of   values")
+    message_ground_truth = paste("Q: What is the ground truth of the graph? Return yes/no.")
+    message_number_of_obs = paste("Q: What is the size of the dataset in the description? Return list of values.")
+    message_type_of_graph = paste("Q: What is the type of graph of the dataset? If none return \"unknown. ")
+    message_researchers = paste("Q: What are the authors in the references of the dataset. Return list of values.")
+
+    message_new = paste('Analyze description of the dataset. Answer the questions marked as Q:. As an output provide one json file in the following format:
+                     [{ "Numb of features": value, "Ground truth": value, "Size": value, "Type of graph": value, "Author references": value/list of values, "Description": value}]')
+
+
+   
+
+    
     for (item in 1:numb_of_records){
       # consider one record from the community   
         rec_curr = zenodo$getRecordByDOI(gmci_records_id[item])
@@ -203,7 +217,18 @@ analyse_records = function(gmci_records_id){
          
          # gathering the information into the list to put it inside the 
          
-         new_entry = list(
+         
+         
+          message_total =   paste(message_new,message_features,message_ground_truth,message_number_of_obs,message_type_of_graph, message_researchers,"Description of the dataset:",mod_text)
+         
+          q_set <- tribble(
+                            ~role, ~content,
+                            "system", 'Answer the questions. If possible answer with only a number, yes/no or list of answers. If possible return list of outcomes for the value. Output NO other text, but one json file in the following format: [{ "Numb of features": value, "Ground truth": value, "Size": value, "Type of graph": value, "Author references": value/list of values, "Description": value}]',
+  "user",   message_total
+)
+          answer_curr = query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1")
+          
+          new_entry = list(
                           zenodoid = zenodo_id,
                           title = zenodo_title,
                           zenododoi = zenodo_doi,
@@ -217,17 +242,13 @@ analyse_records = function(gmci_records_id){
         json_data[[item]] = new_entry
          # work with the metadata description file: 
         
-        new_entry_d = list(
-                    title = zenodo_title,
-                    description = mod_text,
-                    number_of_features = NULL,
-                    number_of_observations =  NULL,
-                    related_researchers = NULL,
-                    ground_truth_graph = NULL,
-                    type_of_graph = NULL
-                    
-        )
         
+        
+        
+        
+        # work with the operand returned by the values 
+        new_entry_d = fromJSON(answer_curr$message$content)
+        new_entry_d$title = zenodo_title
         json_description_data[[item]] = new_entry_d 
          
          # forming up the query for the LLM ollama. notice: a running version of ollama should be open and              running locally on the device
