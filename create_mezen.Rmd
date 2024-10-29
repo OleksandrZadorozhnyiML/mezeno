@@ -1,0 +1,239 @@
+---
+title: "Creating the ``r params$package_name`` R package"
+author: "O.Zadorozhnyi"
+date: "The Date of the publication"
+knit: litr::render
+output: litr::litr_html_document
+params:
+  package_name: "mezen"
+  package_parent_dir: "." # <-- relative to this file's location
+---
+
+<!-- This Rmd file contains all the code needed to define an R package.  Press "Knit" in RStudio or more generally run `litr::render("name-of-this-file.Rmd")` to generate the R package.  Remember that when you want to modify anything about the R package, you should modify this document rather than the package that is outputted.
+-->
+
+## Package setup
+
+We start by specifying the information needed in the DESCRIPTION file of the R package.
+
+```{r package-setup, message=FALSE, results='hide'}
+usethis::create_package(
+  path = ".",
+  fields = list(
+    Package = params$package_name,
+    Version = "0.0.0.9000",
+    Title = "A Package That analyses the metadata from Zenodo community",
+    Description = "This package analyses metadata from Zenodo mardigmci community.",
+    `Authors@R` = person(
+      given = "Oleksandr",
+      family = "Zadorozhnyi",
+      email = "aleks.zadorozhnyi@gmail.com",
+      role = c("aut", "cre")
+      )
+  )
+)
+usethis::use_mit_license(copyright_holder = "F. Last")
+```
+
+## Now to the package itself
+
+### Define a function
+
+Let's define a function for our R package:
+
+```{r}
+#' Say hello to someone
+#' 
+#' @param name Name of a person
+#' @param exclamation Whether to include an exclamation mark
+#' @export 
+say_hello <- function(name, exclamation = TRUE) {
+  paste0("Hello ", name, ifelse(exclamation, "!", "."))
+}
+```
+
+```{r, warning=FALSE, message=FALSE}
+
+# Loading Necessary packages 
+library(litr)
+library(zen4R)
+library(tidyverse)
+# packages to operate the json and html files
+library(jsonlite)
+library(RCurl)
+# packages to transform text from html format to a machine readable format 
+library(httr)
+library(XML)
+library(dplyr)
+library(rvest)
+library(stringr)# Load stringr package
+
+# package to use the local ollama LLM
+library(rollama)
+library(tibble)
+
+#my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
+```
+
+
+```{r}
+#' Say hello to someone
+#' 
+#'  
+load_community_records <- function(name, exclamation = TRUE) {
+  zenodo = ZenodoManager$new(logger = "INFO",token = key_token)
+  community_gm = zenodo$getCommunityById("mardigmci")
+  community_records = community_gm$links$records  
+  
+  data = fromJSON(community_records)
+  gmci_records_id = data$hits$hits$doi
+  def=list(info = data, records= gmci_records_id)
+  return(def)
+}
+```
+
+
+```{r}
+#' create dataframe with the information about the datasets in the community
+#' 
+#' 
+#' 
+#' @export 
+create_dataframe <- function(){
+  df = data.frame(
+  ZenodoID = character(),  # Character data for description of the dataset, change accordingly
+  CollectionName = character(),
+  DOI = character(),
+  Researchers = I(list()),
+  License = character(),
+  Keywords = I(list()),
+  Url = character(),
+  Downloads = integer(),
+  Views = integer(),
+  Number_of_features = I(list()),    # Number of features of the considered dataset, change accordingly
+  Number_of_observations = I(list()),
+  Ground_Truth = numeric(),    # Availability of the ground truth of the considered dataset, change accordingly
+  Type_of_Graph = character(),
+  Description = character(),
+  Authors = I(list()),
+  )
+  colnames(df) = c("Number/ZenodoId","CollectionName","DOI","License","Keywords","Url","Downloads","Views","Number of features","Number of observations","Ground Truth","Type_of_Graph","Description","Authors/Creators")
+  return(df) 
+}
+```
+
+```{r}
+#' 
+#'
+#' @param description_text the text of type string where the LLM has to find the findings 
+#' @export
+read_and_search <- function(description_text){
+  
+  message_features = paste("Q: What is the number of features? Return list of values")
+  message_ground_truth = paste("Q: What is the ground truth of the graph? Return yes/no.")
+  message_number_of_obs = paste("Q: What is the size of the dataset in the description? Return list of values.")
+  message_type_of_graph = paste("Q: What is the type of graph of the dataset? If none return \"unknown. ")
+  message_researchers = paste("Q: What are the authors in the references of the dataset. Return list of values.                               ")
+  message_summary = paste("Q: Could you provide a summary of the description of the dataset? Return one sentence.")
+  
+  message_total = paste(message_features,message_ground_truth,message_number_of_obs,message_type_of_graph, message_researchers, message_summary, "Description of the dataset:",description_text)
+  
+  
+q_set <- tribble(
+  ~role, ~content,
+  "system", "Reply to the questions. Search in the text after the words <<desciption of the dataset>>. If possible answer with only a number, yes/no or list of answers. If possible return list of outcomes.",
+  "user",   message_total
+)
+
+}
+```
+
+
+```{r}
+#' analyses the records within the given list of community records 
+#' 
+#' @param gmci_records_id Name of a person
+#' 
+#' @export 
+#' 
+analyse_records <- function(gmci_records_id){
+  # A function which analyses the community records and fills in the information about the dataset. Manual part. 
+    
+    numb_of_records = length(gmci_records_id)
+    
+    for (item in 1:numb_of_records){
+      # consider one record from the community   
+      rec_curr = zenodo$getRecordByDOI(gmci_records_id[item])
+         
+         # extract list of subjects 
+         subjects_vector = sapply(rec_curr$metadata$subjects, function(x) x$subject)
+         # extract the list of creators of the dataset
+         creator_names_vector = sapply(rec_curr$metadata$creators, function(x) x$person_or_org$name)
+         # extract the id of the record of the dataset on zenodo
+         zenodo_id = rec_curr$id
+         # extract the doi of the records of the dataset on zenodo
+         zenodo_doi = rec_curr$links$doi
+         # extract the title of the record of the dataset on zenodo
+         zenodo_title = rec_curr$metadata$title
+         # store the license of the record of the dataset on zenodo
+         zenodo_license_info = rec_curr$metadata$rights[[1]]$id
+         # store the url under which the datasets is reachable
+         zenodo_url = rec_curr$links$self
+         # extract the information about the views and downloads of the record
+         zenodo_uqviews = rec_curr$stats$this_version.unique_views
+         zenodo_downlds = rec_curr$stats$this_version.unique_downloads
+         
+         
+         #a separate block that extract information from the description 
+         desc_info = rec_new$metadata$description
+                ### looking for a position of the number of features in the string ###
+         # modifying the text to make it accesible for a LLM query
+         u = read_html(desc_info)
+         extracted_text = html_text(u)
+         mod_text = gsub("\n"," ",extracted_text)
+         mod_text = tolower(mod_text)
+         # forming up the query for the LLM ollama. notice: a running version of ollama should be open and              running locally on the device
+         # Add one observation to the dataframe
+   # new_observation <- data.frame(
+   #                Name = curr_info$metadata$title,
+   #                 Number_of_features = numb_of_features,
+   #                  Ground_Truth = find_grnd_trth(mod_text),
+   #                 DOI = curr_info$metadata$doi
+   #                  Researchers
+   # )
+  }
+}
+```
+
+Code chunks whose first line starts with `#'` are added to the package.
+
+We can try running it.
+
+```{r}
+say_hello("Jacob")
+```
+
+That code chunk does not start with `#'`, so it is not added to the package.
+
+Let's write some tests to make sure the function behaves as desired:
+
+```{r}
+testthat::test_that("say_hello works", {
+  testthat::expect_equal(say_hello("Jacob"), "Hello Jacob!")
+  testthat::expect_equal(say_hello("Jacob", exclamation = FALSE), "Hello Jacob.")
+})
+```
+
+Code chunks that have one or more lines starting with `test_that(` (or `testthat::test_that(`) are added to the package as tests.
+
+## Documenting the package and building
+
+We finish by running commands that will document, build, and install the package.  It may also be a good idea to check the package from within this file.
+
+```{r}
+litr::document() # <-- use instead of devtools::document()
+# devtools::build()
+# devtools::install()
+# devtools::check(document = FALSE)
+```
+
