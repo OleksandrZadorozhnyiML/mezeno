@@ -319,7 +319,9 @@ show <- function(name){
 ```
 
 ```{r}
-say_hello("Jacob")
+data = load_community_records("mardigmci")
+file = analyse_records(data$records)
+show()
 ```
 
 That code chunk does not start with `#'`, so it is not added to the package.
