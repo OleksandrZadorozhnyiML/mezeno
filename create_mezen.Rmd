@@ -152,7 +152,7 @@ q_set <- tribble(
 
 
 ```{r}
-#' analyses the records within the given list of community records 
+#' analyses the records within the given list of community records and extracts the metainformation from it
 #' 
 #' @param gmci_records_id Name of a person
 #' 
@@ -318,13 +318,41 @@ show <- function(name){
 }
 ```
 
-```{r}
+
+```{r sample_code, echo=TRUE, message=FALSE, warning=FALSE}
 data = load_community_records("mardigmci")
-file = analyse_records(data$records)
-show()
+file = analyse_records(data$records[1:5])
+show("example.json")
 ```
 
-That code chunk does not start with `#'`, so it is not added to the package.
+
+```{r question_function, message=FALSE, warning=FALSE, include=FALSE}
+question <- function(question_text,json_file){
+  text_pre = "Answer the question based only on the input of the following json file.  As output use only text from the json file and nothing else. If thereis nothing to output, return <>. Json File:"
+  json_data <- fromJSON(json_file)
+  # Convert JSON data to a text format (pretty-printed)
+  text_data <- toJSON(json_data, pretty = TRUE, auto_unbox = TRUE)
+  line = paste(text_pre,text_data,"Question:",question_text)
+  
+  
+  
+  q_set <- tribble(
+                            ~role, ~content,
+                            "system", 'Answer the question based only on the input of the json file. As output use only text from the json file. As output use only text from the json file and nothing else. If thereis nothing to output, return <>',
+                            "user",   line
+                   )
+  
+  query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1" )
+}
+```
+
+
+That code chunk does not start with `#'`, so it is not added to the package. The following chunk code demonstrates how the questions can be put and what answers the LLM gives to it:
+```{r}
+question()
+
+
+```
 
 Let's write some tests to make sure the function behaves as desired:
 
