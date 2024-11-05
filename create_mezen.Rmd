@@ -158,9 +158,12 @@ q_set <- tribble(
 #' 
 #' @export 
 #' 
-analyse_records = function(gmci_records_id){
+analyse_records <- function(gmci_records_id){
   # A function which analyses the community records and fills in the information about the dataset. Manual part. 
     library(dplyr)
+    my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
+    key_token = my_token
+    zenodo = ZenodoManager$new(logger = "INFO",token = key_token)
   
     numb_of_records = length(gmci_records_id)
     # create two dataframes to 
@@ -227,18 +230,18 @@ analyse_records = function(gmci_records_id){
 )
           answer_curr = query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1")
           
-          new_entry = list(
-                          zenodoid = zenodo_id,
-                          title = zenodo_title,
-                          zenododoi = zenodo_doi,
-                          authors = I(creator_names_vector),
-                          license = license_title,
-                          keywords = I(subjects_vector),
-                          url = url_link,
-                          downloads = zenodo_downlds,
-                          views = zenodo_uqviews
-        )
-        json_data[[item]] = new_entry
+          #new_entry = list(
+          #                zenodoid = zenodo_id,
+          #                title = zenodo_title,
+          #                zenododoi = zenodo_doi,
+          #                authors = I(creator_names_vector),
+          #                license = license_title,
+          #                keywords = I(subjects_vector),
+          #                url = url_link,
+          #                downloads = zenodo_downlds,
+          #                views = zenodo_uqviews
+        #)
+        #json_data[[item]] = new_entry
          # work with the metadata description file: 
         
         
@@ -258,6 +261,18 @@ analyse_records = function(gmci_records_id){
         new_entry_d$downloads = zenodo_downlds
         new_entry_d$views = zenodo_uqviews
          
+        # put another order between the variables
+        desired_order <- c(
+  "title", "zenodoid", "zenododoi", "authors", "license", "keywords", 
+  "url", "downloads", "views", 
+  "Numb_of_features", "Ground_truth", "Size", 
+  "Type_of_graph", "Author_references", "One_sentence_description"
+)
+
+        # Reorder the columns in new_entry_d
+        new_entry_d <- new_entry_d[desired_order]
+        
+        
         json_description_data[[item]] = new_entry_d 
          
          # forming up the query for the LLM ollama. notice: a running version of ollama should be open and              running locally on the device
@@ -281,7 +296,8 @@ analyse_records = function(gmci_records_id){
   #merged_df = left_join(df1, df2, by = "title")  
   #merged_list = lapply(1:nrow(merged_df), function(i) merged_df[i, ])
   
-    
+  json_data = toJSON(json_description_data, pretty = TRUE)  # 'pretty = TRUE'     makes it more readable
+  write(json_data, file = "example.json")
   return(json_description_data)
     
 }
@@ -289,7 +305,18 @@ analyse_records = function(gmci_records_id){
 
 Code chunks whose first line starts with `#'` are added to the package.
 
-We can try running it.
+```{r}
+#'@param name path to the file which 
+#' 
+#' @export 
+show <- function(name){
+  json_data <- fromJSON(name)
+  
+  # Print the information in a readable format
+  print("Information stored in JSON file:")
+  print(json_data)
+}
+```
 
 ```{r}
 say_hello("Jacob")
