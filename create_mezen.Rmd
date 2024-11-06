@@ -319,15 +319,15 @@ show <- function(name){
 ```
 
 
-```{r sample_code, echo=TRUE, message=FALSE, warning=FALSE}
+```{r sample_code, echo=FALSE, message=FALSE, warning=FALSE}
 data = load_community_records("mardigmci")
-file = analyse_records(data$records[1:5])
+file = analyse_records(data$records[1:2])
 show("example.json")
 ```
 
 
 ```{r question_function, message=FALSE, warning=FALSE, include=FALSE}
-question <- function(question_text,json_file){
+question <- function(question_text,json_file="example.json"){
   text_pre = "Answer the question based only on the input of the following json file.  As output use only text from the json file and nothing else. If thereis nothing to output, return <>. Json File:"
   json_data <- fromJSON(json_file)
   # Convert JSON data to a text format (pretty-printed)
@@ -349,11 +349,25 @@ question <- function(question_text,json_file){
 
 That code chunk does not start with `#'`, so it is not added to the package. The following chunk code demonstrates how the questions can be put and what answers the LLM gives to it:
 ```{r}
-question()
+question("What datasets have keywords 'Count data'? Return their titles.", json_data)
+
+
+question("What datasets have more than 10 features? Return their zenodoids.")
+
+question("What datasets have more than 100 views? Return their titles.")
 
 
 ```
 
+
+```{r}
+#create a folder where to download my files
+dir.create("download_zenodo")
+options(timeout = 120)
+#download files with shortcut function 'download_zenodo'
+download_zenodo(path = "download_zenodo", "https://doi.org/10.5281/zenodo.8063512",timeout = 180)
+downloaded_files <- list.files("download_zenodo")
+```
 Let's write some tests to make sure the function behaves as desired:
 
 ```{r}
