@@ -1,5 +1,4 @@
 # mezen
-Here is a README file based on the input you provided, outlining the functionality of the package, how to use the functions, and examples of the code:
 
 ---
 
