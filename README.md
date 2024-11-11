@@ -141,12 +141,14 @@ file = analyse_records(data$records[1:10])
 show_data("example.json")
 ```
 
-### Example 2: Query the Data (ask the )
+### Example 2: Query the Data (ask the LLM following questions )
 
 ```{r}
 question("What datasets have keywords 'Count data'? Return their titles.")
 question("What datasets have more than 10 features? Return their Zenodo IDs.")
 question("What datasets have more than 100 views? Return their titles.")
+
+# the following content is still in development 
 download_data("Pharmacological dataset")
 ```
 
