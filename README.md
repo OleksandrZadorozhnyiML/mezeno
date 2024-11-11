@@ -19,7 +19,7 @@ The package integrates several R libraries for text extraction, HTTP requests, a
 
 You can install this package from your local source after building it using `devtools::build()`.
 
-For example, if the package is saved as `mezen_0.0.1.000.tar.gz`, install it using the following command:
+For example, if the package is stored as `mezen_0.0.1.000.tar.gz`, install it using the following command:
 
 ```r
 install.packages("mezen_0.0.1.000.tar.gz", repos = NULL, type = "source")
