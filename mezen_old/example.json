@@ -1,0 +1,40 @@
+[
+  [
+    {
+      "title": "UCI Datasets for structure estimation tasks",
+      "zenodoid": "8063512",
+      "zenododoi": "https://doi.org/10.5281/zenodo.8063512",
+      "authors": ["Mathematical Research Data Initiative"],
+      "license": "Creative Commons Attribution 4.0 International",
+      "keywords": ["MaRDI", "UCI Datasets", "Causal Inference", "Statistical modelling", "TA3", "Structured Data", "Structure Learning", "Probabilistic Graphical Modelling", "Continuous Data", "Count Data", "Ordinal Data", "Categorical Data", "Binary Data"],
+      "url": "https://zenodo.org/api/records/8063512",
+      "downloads": 174,
+      "views": 141,
+      "Numb_of_features": [16, 68],
+      "Ground_truth": "no",
+      "Size": ["9358", "2458285"],
+      "Type_of_graph": "unknown",
+      "Author_references": ["S. de Vito and E. Massera and M. Piga and L. Martinotto and G. di Francia", "Meek, Thiesson and Heckerman (2001)"],
+      "One_sentence_description": "Two preprocessed datasets collected from the UCI repository for structure learning from multivariate data."
+    }
+  ],
+  [
+    {
+      "title": "Pharmacological dataset on drug-induced TdP risk assessment",
+      "zenodoid": "8058964",
+      "zenododoi": "https://doi.org/10.5281/zenodo.8058964",
+      "authors": ["Mathematical Research Data Initiative"],
+      "license": "Creative Commons Attribution 4.0 International",
+      "keywords": ["MaRDI", "TA3", "Probabilistic Graphical Modelling", "Causal Inference", "Curated Dataset", "Pharmaceutical data", "Continuous Data", "Count Data"],
+      "url": "https://zenodo.org/api/records/8058964",
+      "downloads": 105,
+      "views": 223,
+      "Numb_of_features": [16],
+      "Ground_truth": "yes",
+      "Size": ["109"],
+      "Type_of_graph": "unknown",
+      "Author_references": ["Llopis-Lorente, J., Gomis-Tena, J., Cano, J., Romero, L., Saiz, J., & Trenor, B. (2020). In silico classifiers for the assessment of drug proarrhythmicity. Journal of Chemical Information and Modeling, 60(10), 5172--5187.", "Al-Ali, S., Llopis-Lorente, J., Mora, M. T., Seremesant, M., Trenor, B., & Balelli, I. (2023). A causal discovery approach for streamline ion channels selection to improve drug-induced tdp risk assessment."],
+      "One_sentence_description": "A manually collected dataset that investigates the proarrhythmic risk of 109 drugs using parameters obtained from biophysical models."
+    }
+  ]
+]
