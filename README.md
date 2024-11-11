@@ -41,6 +41,12 @@ The package requires the following R packages:
 - `rollama`
 - `tibble`
 
+## Required Software: 
+To be able to run rollama package in R you need to install a distribution of the `ollama` LLM locally on your machine or in the docker. 
+Here is the information on how to do this : https://github.com/ollama/ollama?tab=readme-ov-file. 
+
+- '`ollama`
+
 ## Functions
 
 ### 1. `load_community_records(name)`
