@@ -2,5 +2,7 @@
 
 export(analyse_records)
 export(create_dataframe)
+export(download_data)
+export(load_community_records)
 export(read_and_search)
-export(say_hello)
+export(show)

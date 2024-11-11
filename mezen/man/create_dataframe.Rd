@@ -2,10 +2,10 @@
 % Please edit documentation in create_mezen.Rmd.
 \name{create_dataframe}
 \alias{create_dataframe}
-\title{create dataframe with the information}
+\title{create dataframe with the information about the datasets in the community}
 \usage{
 create_dataframe()
 }
 \description{
-create dataframe with the information
+create dataframe with the information about the datasets in the community
 }

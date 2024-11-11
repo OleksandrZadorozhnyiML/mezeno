@@ -9,8 +9,5 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
 LitrVersionUsed: 0.9.2
-LitrId: fc1f4eec2c95c61f2bddc35e17e80867
+LitrId: 5a64d3ab66b3ffd7bf29a23d965f2660

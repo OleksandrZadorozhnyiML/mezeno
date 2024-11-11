@@ -2,7 +2,7 @@
 % Please edit documentation in create_mezen.Rmd.
 \name{analyse_records}
 \alias{analyse_records}
-\title{analyses the records within the given list of community records}
+\title{analyses the records within the given list of community records and extracts the metainformation from it}
 \usage{
 analyse_records(gmci_records_id)
 }
@@ -10,5 +10,5 @@ analyse_records(gmci_records_id)
 \item{gmci_records_id}{Name of a person}
 }
 \description{
-analyses the records within the given list of community records
+analyses the records within the given list of community records and extracts the metainformation from it
 }
