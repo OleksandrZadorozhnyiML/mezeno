@@ -8,8 +8,8 @@
       "license": "Creative Commons Attribution 4.0 International",
       "keywords": ["MaRDI", "UCI Datasets", "Causal Inference", "Statistical modelling", "TA3", "Structured Data", "Structure Learning", "Probabilistic Graphical Modelling", "Continuous Data", "Count Data", "Ordinal Data", "Categorical Data", "Binary Data"],
       "url": "https://zenodo.org/api/records/8063512",
-      "downloads": 149,
-      "views": 137,
+      "downloads": 180,
+      "views": 141,
       "Numb_of_features": [16, 68],
       "Ground_truth": "no",
       "Size": ["9358", "2458285"],
@@ -27,14 +27,71 @@
       "license": "Creative Commons Attribution 4.0 International",
       "keywords": ["MaRDI", "TA3", "Probabilistic Graphical Modelling", "Causal Inference", "Curated Dataset", "Pharmaceutical data", "Continuous Data", "Count Data"],
       "url": "https://zenodo.org/api/records/8058964",
-      "downloads": 104,
-      "views": 222,
+      "downloads": 111,
+      "views": 223,
       "Numb_of_features": [16],
       "Ground_truth": "yes",
       "Size": ["109"],
       "Type_of_graph": "unknown",
       "Author_references": ["Llopis-Lorente, J., Gomis-Tena, J., Cano, J., Romero, L., Saiz, J., & Trenor, B. (2020). In silico classifiers for the assessment of drug proarrhythmicity. Journal of Chemical Information and Modeling, 60(10), 5172--5187.", "Al-Ali, S., Llopis-Lorente, J., Mora, M. T., Seremesant, M., Trenor, B., & Balelli, I. (2023). A causal discovery approach for streamline ion channels selection to improve drug-induced tdp risk assessment."],
       "One_sentence_description": "A manually collected dataset that investigates the proarrhythmic risk of 109 drugs using parameters obtained from biophysical models."
+    }
+  ],
+  [
+    {
+      "title": "Causal Dataset for cause-effect pairs from Tübingen repository",
+      "zenodoid": "7886287",
+      "zenododoi": "https://doi.org/10.5281/zenodo.7886287",
+      "authors": ["Mathematical Research Data Initiative"],
+      "license": "Creative Commons Attribution 4.0 International",
+      "keywords": ["Causal inference", "MaRDI", "TA3", "Cause-effect analysis", "Probabilistic Graphical Modelling", "Datasets Collection", "Tübingen Repository", "Continuous Data", "Count Data"],
+      "url": "https://zenodo.org/api/records/7886287",
+      "downloads": 64,
+      "views": 155,
+      "Numb_of_features": [2],
+      "Ground_truth": "yes",
+      "Size": ["83 datasets"],
+      "Type_of_graph": "directed",
+      "Author_references": ["max-planck-institute for biological cybernetics", "d. janzing", "j. m. mooij", "j. peters", "j. zscheischler", "b. schoelkopf"],
+      "One_sentence_description": "A two-dimensional database with cause-effect pairs from various datasets, where one variable is known to cause the other."
+    }
+  ],
+  [
+    {
+      "title": "Empathy dataset",
+      "zenodoid": "7683907",
+      "zenododoi": "https://doi.org/10.5281/zenodo.7683907",
+      "authors": ["Mathematical Research Data Initiative"],
+      "license": "Creative Commons Attribution Share Alike 4.0 International",
+      "keywords": ["Causal Inference", "MaRDI", "TA3", "Probabilistic Graphical Modelling", "Count Data"],
+      "url": "https://zenodo.org/api/records/7683907",
+      "downloads": 107,
+      "views": 133,
+      "Numb_of_features": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+      "Ground_truth": true,
+      "Size": ["1973*28", "1270"],
+      "Type_of_graph": "mixed graph",
+      "Author_references": ["Braun et al.", "Davis (1980)"],
+      "One_sentence_description": "The dataset contains 1973 French-speaking students' questionnaire responses assessing empathy and other components."
+    }
+  ],
+  [
+    {
+      "title": "Isoprenoid gene network in Arabidopsis thaliana",
+      "zenodoid": "7682903",
+      "zenododoi": "https://doi.org/10.5281/zenodo.7682903",
+      "authors": ["Mathematical Research Data Initiative"],
+      "license": "Creative Commons Attribution Share Alike 4.0 International",
+      "keywords": ["Causal Inference", "Gene Regulatory Network", "MaRDI", "TA3", "Probabilistic Graphical Modelling", "Gene Expression Dataset"],
+      "url": "https://zenodo.org/api/records/7682903",
+      "downloads": 101,
+      "views": 117,
+      "Numb_of_features": ["gene expression", "microarrays", "genechip"],
+      "Ground_truth": "yes",
+      "Size": ["118*40", "40"],
+      "Type_of_graph": "mixed graph",
+      "Author_references": ["Arabidopsis thaliana gene expression data set", "Affymetrix microarrays"],
+      "One_sentence_description": "The dataset contains 118 genechip microarray measurements of Arabidopsis thaliana gene expression under various experimental conditions."
     }
   ]
 ]

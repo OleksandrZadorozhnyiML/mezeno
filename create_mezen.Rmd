@@ -39,7 +39,7 @@ usethis::use_mit_license(copyright_holder = "F. Last")
 
 ### Define a function
 
-Let's write the necessary libryries for our R package:
+Let's load the necessary libryries for our R package:
 
 
 ```{r}
@@ -58,7 +58,7 @@ library(dplyr)
 library(rvest)
 library(stringr)# Load stringr package
 
-# package to use the local ollama LLM
+# package to use the local ollama LLM from r studio
 library(rollama)
 library(tibble)
 
@@ -74,6 +74,19 @@ library(tibble)
 #' @export 
 #' 
 load_community_records <- function(name, exclamation = TRUE) {
+  library(litr)
+  library(zen4R)
+  library(tidyverse)
+  # packages to operate the json and html files
+  library(jsonlite)
+  library(RCurl)
+  # packages to transform text from html format to a machine readable format 
+  library(httr)
+  library(XML)
+  library(dplyr)
+  library(rvest)
+  library(stringr)# Load stringr package
+  
   my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
   key_token = my_token
   zenodo = ZenodoManager$new(logger = "INFO",token = key_token)
@@ -153,6 +166,9 @@ q_set <- tribble(
 #' 
 analyse_records <- function(gmci_records_id){
   # A function which analyses the community records and fills in the information about the dataset. Manual part. 
+    # package to use the local ollama LLM from r studio
+    library(rollama)
+    library(tibble)
     library(dplyr)
     my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
     key_token = my_token
@@ -305,7 +321,7 @@ Code chunks whose first line starts with `#'` are added to the package.
 #' 
 #' @export 
 #' 
-show <- function(name){
+show_data <- function(name){
   json_data <- fromJSON(name)
   
   # Print the information in a readable format
@@ -317,8 +333,8 @@ show <- function(name){
 
 ```{r sample_code, echo=FALSE, message=FALSE, warning=FALSE}
 data = load_community_records("mardigmci")
-file = analyse_records(data$records[1:2])
-show("example.json")
+file = analyse_records(data$records[1:10])
+show_data("example.json")
 ```
 
 
@@ -349,13 +365,13 @@ question <- function(question_text,json_file="example.json"){
 ```
 
 ```{r}
-#'
-#'
-#' @param text parameter that identifies the that where to look for integers 
+#' Question to the LLM
+#' 
+#' @param text parameter that sets the input text for LLM to retrieve from
 #' 
 #' @export 
 #' 
-find_integer_in_text <- function(text) {
+find_integer_in_text <-function(text) {
   # Use regular expression to match integer numbers in the text
   match <- regmatches(text, regexpr("\\b\\d+\\b", text))
   
@@ -377,10 +393,10 @@ find_integer_in_text <- function(text) {
 #' 
 #' @export 
 #' 
-download_data <- function(question_text,json_file="example.json"){
-  text_pre = paste("Retrieve the json item for the dataset",question_text,"Json File:")
+download_data <- function(question_text){
+  text_pre = paste0("From the following JSON data, please return the description and created date for the object with the title", question_text,". JSON-data:")
   
-  json_data = fromJSON(json_file)
+  json_data = fromJSON("example.json")
   # Convert JSON data to a text format (pretty-printed)
   text_data = toJSON(json_data, pretty = TRUE, auto_unbox = TRUE)
   line = paste(text_pre,text_data)
@@ -389,7 +405,7 @@ download_data <- function(question_text,json_file="example.json"){
   
   q_set = tribble(
                             ~role, ~content,
-                            "system", 'Retrieve the json item for the dataset. As output use only json-item from the json file and nothing else.',
+                            "system", 'From the json-data, extract a particular piece of information that corresponds to the given title.',
                             "user",   line
                    )
   
@@ -410,11 +426,17 @@ download_data <- function(question_text,json_file="example.json"){
   link = paste0("https://doi.org/10.5281/zenodo.",find_integer_in_text(ans_llm$message$content))
   # downloading the record contained in the link
   
-  dir.create("./download_zenodo")
+  if (!dir.exists("./download_zenodo")) 
+    {
+        dir.create("download_zenodo")
+    }
   #download files with shortcut function 'download_zenodo'
   download_zenodo(path = "download_zenodo", link,timeout = 180)
   downloaded_files <- list.files("download_zenodo")
   
+  
+  message <- paste("Dataset successfully downloaded to /download_zenodo")
+  print(message)
 }
 ```
 
@@ -422,14 +444,15 @@ download_data <- function(question_text,json_file="example.json"){
 That code chunk does not start with `#'`, so it is not added to the package. The following chunk code demonstrates how the questions can be put and what answers the LLM gives to it:
 ```{r}
 
-
-
+# Some demonstration 
 question("What datasets have keywords 'Count data'? Return their titles.")
 
 question("What datasets have more than 10 features? Return their zenodoids.")
 
 question("What datasets have more than 100 views? Return their titles.")
 
+
+# still in the development
 download_data("Pharmacological dataset")
 
 ```
@@ -449,8 +472,8 @@ We finish by running commands that will document, build, and install the package
 
 ```{r}
 litr::document() # <-- use instead of devtools::document()
-# devtools::build()
-# devtools::install()
+devtools::build()
+devtools::install()
 # devtools::check(document = FALSE)
 ```
 

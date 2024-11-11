@@ -127,17 +127,17 @@ This function finds the first integer in a given text string using regular expre
 
 ## Example Usage
 
-### Example 1: Load Zenodo Community Records
+### Example 1: Firstly one should load Zenodo Community Records and produce a json file "example.json" with the information stored in the community
 
-```r
+```{r}
 data = load_community_records("mardigmci")
 file = analyse_records(data$records[1:10])
 show_data("example.json")
 ```
 
-### Example 2: Query the Data
+### Example 2: Query the Data (ask the )
 
-```r
+```{r}
 question("What datasets have keywords 'Count data'? Return their titles.")
 question("What datasets have more than 10 features? Return their Zenodo IDs.")
 question("What datasets have more than 100 views? Return their titles.")
