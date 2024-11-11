@@ -16,7 +16,7 @@ params:
 
 We start by specifying the information needed in the DESCRIPTION file of the R package.
 
-```{r package-setup, message=FALSE, results='hide'}
+```{r}
 usethis::create_package(
   path = ".",
   fields = list(
@@ -42,7 +42,7 @@ usethis::use_mit_license(copyright_holder = "F. Last")
 Let's define a function for our R package:
 
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
 
 # Loading Necessary packages 
 library(litr)
@@ -72,6 +72,7 @@ library(tibble)
 #' @param name parameter that sets the name of the repository 
 #' 
 #' @export 
+#' 
 load_community_records <- function(name, exclamation = TRUE) {
   my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
   key_token = my_token
@@ -339,34 +340,50 @@ question <- function(question_text,json_file="example.json"){
 ```
 
 
+```{r}
+
+#'@param question_text path to the file which 
+#' 
+#' @export 
+download_data <- function(question_text,json_file="example.json"){
+  text_pre = paste("Give the zenododoi of the dataset:",question_text,"As output use only the numbers from the following json file and nothing else. If thereis nothing to output, return <>. Json File:")
+  
+  json_data = fromJSON(json_file)
+  # Convert JSON data to a text format (pretty-printed)
+  text_data = toJSON(json_data, pretty = TRUE, auto_unbox = TRUE)
+  line = paste(text_pre,text_data)
+  
+  
+  
+  q_set = tribble(
+                            ~role, ~content,
+                            "system", 'Give the zenodoid based only on the input of the json file. As output use only the text from the json file. As output use only text from the json file and nothing else. If thereis nothing to output, return <>',
+                            "user",   line
+                   )
+  
+  query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1" )
+}
+```
+
+
 That code chunk does not start with `#'`, so it is not added to the package. The following chunk code demonstrates how the questions can be put and what answers the LLM gives to it:
 ```{r}
-question("What datasets have keywords 'Count data'? Return their titles.", json_data)
 
 
-question("What datasets have more than 10 features? Return their zenodoids.")
 
-question("What datasets have more than 100 views? Return their titles.")
+question("What datasets have keywords 'Count data'? Return their titles.", json_data="example.json")
 
+question("What datasets have more than 10 features? Return their zenodoids.",json_data="example.json")
+
+question("What datasets have more than 100 views? Return their titles.",json_data="example.json")
 
 ```
 
 
-```{r}
-#create a folder where to download my files
-dir.create("download_zenodo")
-options(timeout = 120)
-#download files with shortcut function 'download_zenodo'
-download_zenodo(path = "download_zenodo", "https://doi.org/10.5281/zenodo.8063512",timeout = 180)
-downloaded_files <- list.files("download_zenodo")
-```
 Let's write some tests to make sure the function behaves as desired:
 
 ```{r}
-testthat::test_that("analyse records works", {
-  testthat::expect_equal(say_hello("Jacob"), "Hello Jacob!")
-  testthat::expect_equal(say_hello("Jacob", exclamation = FALSE), "Hello Jacob.")
-})
+
 ```
 
 Code chunks that have one or more lines starting with `test_that(` (or `testthat::test_that(`) are added to the package as tests.
