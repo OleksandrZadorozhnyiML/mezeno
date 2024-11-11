@@ -299,9 +299,12 @@ analyse_records <- function(gmci_records_id){
 Code chunks whose first line starts with `#'` are added to the package.
 
 ```{r}
-#'@param name path to the file which 
+#' Show the necessary files
+#' 
+#' @param name parameter that sets the name of the repository 
 #' 
 #' @export 
+#' 
 show <- function(name){
   json_data <- fromJSON(name)
   
@@ -341,10 +344,12 @@ question <- function(question_text,json_file="example.json"){
 
 
 ```{r}
-
-#'@param question_text path to the file which 
+#' Question to the LLM
+#' 
+#' @param question_text parameter that sets the input text 
 #' 
 #' @export 
+#' 
 download_data <- function(question_text,json_file="example.json"){
   text_pre = paste("Give the zenododoi of the dataset:",question_text,"As output use only the numbers from the following json file and nothing else. If thereis nothing to output, return <>. Json File:")
   
@@ -361,7 +366,7 @@ download_data <- function(question_text,json_file="example.json"){
                             "user",   line
                    )
   
-  query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1" )
+  ans_net = query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1" )
 }
 ```
 
@@ -371,11 +376,11 @@ That code chunk does not start with `#'`, so it is not added to the package. The
 
 
 
-question("What datasets have keywords 'Count data'? Return their titles.", json_data="example.json")
+question("What datasets have keywords 'Count data'? Return their titles.")
 
-question("What datasets have more than 10 features? Return their zenodoids.",json_data="example.json")
+question("What datasets have more than 10 features? Return their zenodoids.")
 
-question("What datasets have more than 100 views? Return their titles.",json_data="example.json")
+question("What datasets have more than 100 views? Return their titles.")
 
 ```
 
