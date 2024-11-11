@@ -41,16 +41,6 @@ usethis::use_mit_license(copyright_holder = "F. Last")
 
 Let's define a function for our R package:
 
-```{r}
-#' Say hello to someone
-#' 
-#' @param name Name of a person
-#' @param exclamation Whether to include an exclamation mark
-#' @export 
-say_hello <- function(name, exclamation = TRUE) {
-  paste0("Hello ", name, ifelse(exclamation, "!", "."))
-}
-```
 
 ```{r, warning=FALSE, message=FALSE}
 
@@ -79,7 +69,9 @@ library(tibble)
 ```{r}
 #' Download the necessary files
 #' 
-#'  
+#' @param name parameter that sets the name of the repository 
+#' 
+#' @export 
 load_community_records <- function(name, exclamation = TRUE) {
   my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
   key_token = my_token
