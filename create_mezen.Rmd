@@ -337,7 +337,6 @@ file = analyse_records(data$records[1:10])
 show_data("example.json")
 ```
 
-
 ```{r}
 #' Asks LLM to retrieve the information
 #' 
@@ -387,43 +386,65 @@ find_integer_in_text <-function(text) {
 
 
 ```{r}
+#' this is an alternative function to search in the titles of the given datasets and return the value of the dataset found in the list
+#' 
+#' @param string text to look for 
+#' @param text data which is to be searched
+#' @export 
+#' 
+#' 
+#' 
+check_string_in_text <- function(string, text) {
+  # Ensure inputs are characters
+  if (!is.character(string) || !is.character(text)) {
+    stop("Both inputs must be character strings.")
+  }
+  
+  # Use grepl to check for the presence of the string in the text
+  result <- grepl(pattern = string, x = text, fixed = TRUE)
+  
+  return(result)
+}
+```
+
+```{r}
+#' this is an alternative function to search in the titles of the given datasets and return the value of the dataset found in the list
+#' 
+#' @param search_text parameter that sets the input text 
+#' @param file parameter that sets the file to read the json data from
+#' @export 
+#' 
+#' 
+#' 
+parse_data <-function(search_text,file){
+  df=fromJSON(file)
+  n = length(df)
+  for (i in 1:n){
+    flag = check_string_in_text(search_text,df[[i]]$title)
+    if (flag) {
+      return(i)
+    }
+  }
+  if (!(flag)) {
+    return(0)
+  }
+}
+
+```
+
+
+```{r}
 #' Question to the LLM
 #' 
 #' @param question_text parameter that sets the input text 
 #' 
 #' @export 
 #' 
-download_data <- function(question_text){
-  text_pre = paste0("From the following JSON data, please return the description and created date for the object with the title", question_text,". JSON-data:")
-  
-  json_data = fromJSON("example.json")
-  # Convert JSON data to a text format (pretty-printed)
-  text_data = toJSON(json_data, pretty = TRUE, auto_unbox = TRUE)
-  line = paste(text_pre,text_data)
-  
-  
-  
-  q_set = tribble(
-                            ~role, ~content,
-                            "system", 'From the json-data, extract a particular piece of information that corresponds to the given title.',
-                            "user",   line
-                   )
-  
-  ans_net = query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1" )
-  
-  retrieved_text = ans_net$message$content
-  
-  q_set = tribble(
-                            ~role, ~content,
-                            "system", 'Retrieve the zenododoi item for the dataset. As output return only number after zenodo. and nothing else.',
-                            "user",   retrieved_text
-                   )
-  ans_llm  = query(q_set,model_params = list(seed = 42, temperature = 0),model = "llama3.1")
-  
-  
-  
+download_data <- function(search_text,file){
+  element = parse_data(search_text,file)
+  df=fromJSON(file)
   # finding the zenodo doi which is then be transformed to an integer to download a record from
-  link = paste0("https://doi.org/10.5281/zenodo.",find_integer_in_text(ans_llm$message$content))
+  link = df[[element]]$zenododoi
   # downloading the record contained in the link
   
   if (!dir.exists("./download_zenodo")) 
@@ -441,6 +462,13 @@ download_data <- function(question_text){
 ```
 
 
+```{r}
+# downloading the dataset
+download_data("Pharmacological dataset","example.json")
+
+```
+
+
 That code chunk does not start with `#'`, so it is not added to the package. The following chunk code demonstrates how the questions can be put and what answers the LLM gives to it:
 ```{r}
 
@@ -453,7 +481,6 @@ question("What datasets have more than 100 views? Return their titles.")
 
 
 # still in the development
-download_data("Pharmacological dataset")
 
 ```
 
