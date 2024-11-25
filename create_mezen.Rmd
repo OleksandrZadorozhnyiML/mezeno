@@ -473,11 +473,11 @@ That code chunk does not start with `#'`, so it is not added to the package. The
 ```{r}
 
 # Some demonstration 
-question("What datasets have keywords 'Count data'? Return their titles.")
+question("What datasets have keywords 'Count data'? Return their titles.","example.json")
 
-question("What datasets have more than 10 features? Return their zenodoids.")
+question("What datasets have more than 100 features? Return their zenodoids.","example.json")
 
-question("What datasets have more than 100 views? Return their titles.")
+question("What datasets have more than 100 views? Return their titles.","example.json")
 
 
 # still in the development
