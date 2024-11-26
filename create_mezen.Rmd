@@ -33,6 +33,17 @@ usethis::create_package(
   )
 )
 usethis::use_mit_license(copyright_holder = "F. Last")
+usethis::use_package("litr")
+usethis::use_package("zen4R")
+usethis::use_package("jsonlite")
+usethis::use_package("RCurl")
+usethis::use_package("httr")
+usethis::use_package("XML")
+usethis::use_package("dplyr")
+usethis::use_package("rvest")
+usethis::use_package("stringr")
+usethis::use_package("rollama")
+usethis::use_package("tibble")
 ```
 
 ## Now to the package itself
@@ -74,18 +85,9 @@ library(tibble)
 #' @export 
 #' 
 load_community_records <- function(name, exclamation = TRUE) {
-  library(litr)
-  library(zen4R)
+ 
   library(tidyverse)
   # packages to operate the json and html files
-  library(jsonlite)
-  library(RCurl)
-  # packages to transform text from html format to a machine readable format 
-  library(httr)
-  library(XML)
-  library(dplyr)
-  library(rvest)
-  library(stringr)# Load stringr package
   
   my_token = "9hxUBkJtjtTeWAN1hIFMPrFHOG53vku0QdMeqrNXO113U7achzZ6drn4l4CB"
   key_token = my_token
