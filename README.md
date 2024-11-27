@@ -180,3 +180,79 @@ litr::document()  # Use instead of devtools::document()
 devtools::build()  # Build the package
 devtools::install()  # Install the package
 ```
+
+
+## The issue with wrong package curl installation might appear when using  an aarch64 system, which typically refers to ARM64 architecture (e.g., Apple Silicon like M1 or M2). 
+
+Here is the possible solution for it. 
+
+## Steps to Resolve
+## 1. Check Compatibility of R and Installed Packages
+
+Ensure that your R installation is built for aarch64. Confirm this in R:
+
+```r
+R.Version()$arch
+```
+It should return aarch64. If it does not, you may need to reinstall the correct version of R.
+
+Download the appropriate ARM64 version of R from CRAN.
+
+## 2. Reinstall the curl Package for ARM64
+
+Corruption or mismatches can occur if the package is incorrectly built for x86_64 instead of ARM64. To rebuild it for ARM64:
+
+Remove the existing curl package:
+
+
+```r
+remove.packages("curl")
+```
+Install the package from source to ensure compatibility:
+
+## 
+
+```r
+    install.packages("curl", type = "source")
+```
+
+Note: Installing from source requires developer tools. If you haven’t already installed Xcode Command Line Tools, run in the command line:
+```bash
+    xcode-select --install
+```
+## 3. Ensure libcurl is Properly Installed
+
+The curl package depends on libcurl, which must be installed on your system.
+
+Use Homebrew to install libcurl:
+```bash
+    brew install curl
+```
+
+Check that libcurl is accessible and ARM64-compatible:
+
+```bash
+  file $(brew --prefix curl)/lib/libcurl.dylib
+```
+The output should include arm64.
+
+## 4. Set the Correct libcurl Path
+
+Ensure R knows where to find the ARM64-compatible libcurl. If the library path is misconfigured, you can specify it explicitly.
+
+## Find the path to libcurl:
+
+```bash 
+    brew --prefix curl
+```
+Example output: /opt/homebrew/opt/curl
+
+Set the environment variable LD_LIBRARY_PATH:
+
+```bash 
+  export LD_LIBRARY_PATH=/opt/homebrew/opt/curl/lib:$LD_LIBRARY_PATH
+```
+Alternatively, configure PKG_CONFIG_PATH for R during installation:
+```bash
+  export PKG_CONFIG_PATH=/opt/homebrew/opt/curl/lib/pkgconfig
+```
